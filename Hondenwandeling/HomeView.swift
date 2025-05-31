@@ -8,11 +8,11 @@
 import SwiftUI
 
 struct HomeView: View {
-    let username = UserDefaults.standard.string(forKey: "username") ?? "Guest"
+    let name = UserDefaults.standard.string(forKey: "name") ?? "Guest"
     
     var body: some View {
         VStack(spacing: 20) {
-            Text("Hello, \(username)!")
+            Text("Hello, \(name)!")
                 .font(.largeTitle)
                 .bold()
             

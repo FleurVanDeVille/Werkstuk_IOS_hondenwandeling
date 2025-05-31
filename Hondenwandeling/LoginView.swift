@@ -8,9 +8,15 @@
 import SwiftUI
 
 struct LoginView: View {
-    @State private var email: String = ""
-    @State private var password: String = ""
+    @State private var email = ""
+    @State private var password = ""
+    @State private var loginFailed = false
+    @State private var isLoggedIn = UserDefaults.standard.bool(forKey: "isLoggedIn")
 
+    init() {
+        UserDefaults.standard.set(false, forKey: "isLoggedIn")
+    }
+    
     var body: some View {
         ZStack {
             VStack {
@@ -22,6 +28,8 @@ struct LoginView: View {
                     .padding(.bottom, 5)
 
                 Text("Hi! Welcome back, you’ve been missed")
+                
+                NavigationLink("No account? Sign Up", destination: SignUpView())
                     .padding(.bottom, 40)
 
                 VStack(alignment: .leading, spacing: 16) {
@@ -49,21 +57,35 @@ struct LoginView: View {
                 }
                 .padding(.horizontal, 40)
                 .padding(.bottom, 30)
-
-                Button(action: {
-                    // Handle login action
-                }) {
-                    Text("Login")
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(Color(red: 0.694, green: 0.874, blue: 0.866))
-                        .foregroundColor(.black)
-                        .cornerRadius(30)
+                
+                if loginFailed {
+                    Text("Invalid email or password")
+                        .foregroundColor(.red)
                 }
-                .padding(.horizontal, 80)
+
+                Button("Login") {
+                    let savedEmail = UserDefaults.standard.string(forKey: "email")
+                    let savedPassword = UserDefaults.standard.string(forKey: "password")
+                                
+                    if savedEmail == email && savedPassword == password {
+                        UserDefaults.standard.set(true, forKey: "isLoggedIn")
+                            isLoggedIn = true
+                    } else {
+                            loginFailed = true
+                    }
+                }
+                .frame(maxWidth: .infinity)
+                .padding()
+                .background(Color(red: 0.694, green: 0.874, blue: 0.866))
+                .foregroundColor(.black)
+                .cornerRadius(30)
+                .padding(.horizontal, 40)
 
                 Spacer()
             }
+        }
+        .navigationDestination(isPresented: $isLoggedIn) {
+            HomeView()
         }
     }
 }

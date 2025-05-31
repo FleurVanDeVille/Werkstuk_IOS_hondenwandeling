@@ -15,7 +15,7 @@ struct AppEntryView: View {
             if isLoggedIn {
                 HomeView()
             } else {
-                LoginView()
+                ContentView()
             }
         }
     }
