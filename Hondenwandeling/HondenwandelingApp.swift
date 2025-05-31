@@ -11,7 +11,7 @@ import SwiftUI
 struct HondenwandelingApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            SplashView()
         }
     }
 }

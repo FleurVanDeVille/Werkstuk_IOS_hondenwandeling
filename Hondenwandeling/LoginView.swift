@@ -35,6 +35,7 @@ struct LoginView: View {
                         .cornerRadius(30)
                         .keyboardType(.emailAddress)
                         .autocapitalization(.none)
+                        .padding(.bottom, 15)
 
                     
                     Text("Password")
