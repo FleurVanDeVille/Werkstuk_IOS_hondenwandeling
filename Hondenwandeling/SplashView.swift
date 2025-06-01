@@ -27,9 +27,12 @@ struct SplashView: View {
                     
                     Spacer()
                     
-                    Text("WalkMyDog")
-                        .font(.system(size: 20, weight: .bold))
+                    Image("WalkMyDog_logo")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(height: 25)
                         .padding(.bottom, 20)
+                        .padding(.top, 25)
                 }
             }
             .onAppear {
