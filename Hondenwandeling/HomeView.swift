@@ -1,42 +1,5 @@
-//  HomeView.swift
-//  Hondenwandeling
-//
-//  Created by Fleur Van De Ville on 31/05/2025.
-//
-
 import SwiftUI
 import Charts
-
-struct WalkData: Identifiable {
-    let id = UUID()
-    let month: String
-    let kilometers: Double
-}
-
-struct RecentWalk: Identifiable {
-    let id = UUID()
-    let date: String
-    let distance: Double
-    let mapImageName: String
-    let location: String
-    let duration: String
-    let speed: String
-
-    init?(from dict: [String: String]) {
-        guard let date = dict["date"],
-              let duration = dict["duration"],
-              let distanceStr = dict["distance"],
-              let distance = Double(distanceStr.replacingOccurrences(of: " km", with: "")) else {
-            return nil
-        }
-        self.date = date
-        self.duration = duration
-        self.distance = distance
-        self.mapImageName = "walk_map_placeholder"
-        self.location = "Unknown"
-        self.speed = "-"
-    }
-}
 
 struct HomeView: View {
     @State private var recentWalks: [RecentWalk] = []
@@ -64,48 +27,8 @@ struct HomeView: View {
                 VStack {
                     ScrollView {
                         VStack(alignment: .leading, spacing: 20) {
-                            HStack {
-                                VStack(alignment: .leading) {
-                                    Text("Hello, \(name)!")
-                                        .font(.largeTitle)
-                                        .bold()
-                                    Text("It’s time for another walk")
-                                        .foregroundColor(.gray)
-                                }
-                                Spacer()
-                                Image("dog_avatar")
-                                    .resizable()
-                                    .frame(width: 90, height: 90)
-                            }
-                            .padding(.horizontal)
-
-                            Text("This Year")
-                                .font(.title2)
-                                .bold()
-                                .padding(.horizontal)
-
-                            if !monthlyWalks.isEmpty {
-                                Chart(monthlyWalks) { walk in
-                                    LineMark(
-                                        x: .value("Month", walk.month),
-                                        y: .value("Kilometers", walk.kilometers)
-                                    )
-                                    .foregroundStyle(Color(red: 0.694, green: 0.874, blue: 0.866))
-                                    PointMark(
-                                        x: .value("Month", walk.month),
-                                        y: .value("Kilometers", walk.kilometers)
-                                    )
-                                    .foregroundStyle(Color(red: 0.694, green: 0.874, blue: 0.866))
-                                }
-                                .frame(height: 200)
-                                .padding(.horizontal)
-                            } else {
-                                Text("No walk data yet")
-                                    .foregroundColor(.gray)
-                                    .padding(.horizontal)
-                            }
-
-                            Spacer()
+                            HomeHeaderView(name: name)
+                            ChartSectionView(monthlyWalks: monthlyWalks)
 
                             Text("Recent Walks")
                                 .font(.title2)
@@ -115,47 +38,7 @@ struct HomeView: View {
                             if !recentWalks.isEmpty {
                                 VStack(spacing: 15) {
                                     ForEach(recentWalks) { walk in
-                                        HStack(spacing: 10) {
-                                            Image(walk.mapImageName)
-                                                .resizable()
-                                                .scaledToFill()
-                                                .frame(width: 100, height: 80)
-                                                .cornerRadius(10)
-
-                                            VStack(alignment: .leading, spacing: 5) {
-                                                Text("\(walk.location) - \(walk.date)")
-                                                    .font(.headline)
-
-                                                HStack {
-                                                    VStack(alignment: .leading) {
-                                                        Text("\(walk.duration)")
-                                                            .bold()
-                                                        Text("Duration")
-                                                            .font(.caption)
-                                                            .foregroundColor(.gray)
-                                                    }
-                                                    VStack(alignment: .leading) {
-                                                        Text("\(walk.distance, specifier: "%.1f") km")
-                                                            .bold()
-                                                        Text("Distance")
-                                                            .font(.caption)
-                                                            .foregroundColor(.gray)
-                                                    }
-                                                    VStack(alignment: .leading) {
-                                                        Text("\(walk.speed)")
-                                                            .bold()
-                                                        Text("Speed")
-                                                            .font(.caption)
-                                                            .foregroundColor(.gray)
-                                                    }
-                                                }
-                                            }
-                                            Spacer()
-                                        }
-                                        .padding()
-                                        .background(Color(.systemGray6))
-                                        .cornerRadius(20)
-                                        .padding(.horizontal)
+                                        RecentWalkRow(walk: walk)
                                     }
                                 }
                                 .padding(.bottom, 80)
@@ -208,6 +91,6 @@ struct HomeView: View {
     }
 }
 
-#Preview {
+#Preview{
     HomeView()
 }
