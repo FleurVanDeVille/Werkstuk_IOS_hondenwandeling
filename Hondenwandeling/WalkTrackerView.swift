@@ -22,6 +22,7 @@ struct WalkTrackerView: View {
 
     var body: some View {
         ZStack(alignment: .bottom) {
+            
             Map(position: $locationManager.cameraPosition, interactionModes: [.all]) {
                 ForEach(routeCoordinates) { wrappedCoord in
                     Annotation("", coordinate: wrappedCoord.coord) {
@@ -55,11 +56,11 @@ struct WalkTrackerView: View {
                     }
                 } else {
                     VStack(spacing: 16) {
-                        HStack{
+                        HStack {
                             Text(formattedTime(elapsedTime))
                                 .font(.system(size: 34, weight: .bold, design: .monospaced))
                                 .foregroundColor(.white)
-
+                            
                             Button(action: togglePause) {
                                 Circle()
                                     .fill(Color(red: 0.694, green: 0.874, blue: 0.866))
@@ -70,16 +71,16 @@ struct WalkTrackerView: View {
                                     )
                             }
                         }
-
+                        
                         Text("\(distance, specifier: "%.2f") km")
                             .font(.title)
                             .foregroundColor(.white)
-
+                        
                         Button(action: {
                             showStopAlert = true
                         }) {
                             Text("STOP")
-                                .font(.title2)
+                                .font(.title)
                                 .bold()
                                 .padding()
                                 .frame(maxWidth: .infinity)
@@ -92,10 +93,13 @@ struct WalkTrackerView: View {
                             Button("Yes", role: .destructive, action: stopWalk)
                             Button("Cancel", role: .cancel, action: {})
                         }
+                        .padding(.bottom, 20)
                     }
-                    .padding()
+                    .padding(.top, 30)
                     .background(Color.black)
-                    .cornerRadius(40)                }
+                    .ignoresSafeArea(edges: .bottom)
+                }
+
             }
         }
         .onReceive(locationManager.$lastLocation) { location in
