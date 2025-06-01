@@ -1,4 +1,3 @@
-//
 //  HomeView.swift
 //  Hondenwandeling
 //
@@ -85,18 +84,26 @@ struct HomeView: View {
                                 .bold()
                                 .padding(.horizontal)
 
-                            Chart(monthlyWalks) { walk in
-                                LineMark(
-                                    x: .value("Month", walk.month),
-                                    y: .value("Kilometers", walk.kilometers)
-                                )    .foregroundStyle(Color(red: 0.694, green: 0.874, blue: 0.866))
-                                PointMark(
-                                    x: .value("Month", walk.month),
-                                    y: .value("Kilometers", walk.kilometers)
-                                )    .foregroundStyle(Color(red: 0.694, green: 0.874, blue: 0.866))  
+                            if !monthlyWalks.isEmpty {
+                                Chart(monthlyWalks) { walk in
+                                    LineMark(
+                                        x: .value("Month", walk.month),
+                                        y: .value("Kilometers", walk.kilometers)
+                                    )
+                                    .foregroundStyle(Color(red: 0.694, green: 0.874, blue: 0.866))
+                                    PointMark(
+                                        x: .value("Month", walk.month),
+                                        y: .value("Kilometers", walk.kilometers)
+                                    )
+                                    .foregroundStyle(Color(red: 0.694, green: 0.874, blue: 0.866))
+                                }
+                                .frame(height: 200)
+                                .padding(.horizontal)
+                            } else {
+                                Text("No walk data yet")
+                                    .foregroundColor(.gray)
+                                    .padding(.horizontal)
                             }
-                            .frame(height: 200)
-                            .padding(.horizontal)
 
                             Spacer()
 
@@ -105,52 +112,58 @@ struct HomeView: View {
                                 .bold()
                                 .padding(.horizontal)
 
-                            VStack(spacing: 15) {
-                                ForEach(recentWalks) { walk in
-                                    HStack(spacing: 10) {
-                                        Image(walk.mapImageName)
-                                            .resizable()
-                                            .scaledToFill()
-                                            .frame(width: 100, height: 80)
-                                            .cornerRadius(10)
+                            if !recentWalks.isEmpty {
+                                VStack(spacing: 15) {
+                                    ForEach(recentWalks) { walk in
+                                        HStack(spacing: 10) {
+                                            Image(walk.mapImageName)
+                                                .resizable()
+                                                .scaledToFill()
+                                                .frame(width: 100, height: 80)
+                                                .cornerRadius(10)
 
-                                        VStack(alignment: .leading, spacing: 5) {
-                                            Text("\(walk.location) - \(walk.date)")
-                                                .font(.headline)
+                                            VStack(alignment: .leading, spacing: 5) {
+                                                Text("\(walk.location) - \(walk.date)")
+                                                    .font(.headline)
 
-                                            HStack {
-                                                VStack(alignment: .leading) {
-                                                    Text("\(walk.duration)")
-                                                        .bold()
-                                                    Text("Duration")
-                                                        .font(.caption)
-                                                        .foregroundColor(.gray)
-                                                }
-                                                VStack(alignment: .leading) {
-                                                    Text("\(walk.distance, specifier: "%.1f") km")
-                                                        .bold()
-                                                    Text("Distance")
-                                                        .font(.caption)
-                                                        .foregroundColor(.gray)
-                                                }
-                                                VStack(alignment: .leading) {
-                                                    Text("\(walk.speed)")
-                                                        .bold()
-                                                    Text("Speed")
-                                                        .font(.caption)
-                                                        .foregroundColor(.gray)
+                                                HStack {
+                                                    VStack(alignment: .leading) {
+                                                        Text("\(walk.duration)")
+                                                            .bold()
+                                                        Text("Duration")
+                                                            .font(.caption)
+                                                            .foregroundColor(.gray)
+                                                    }
+                                                    VStack(alignment: .leading) {
+                                                        Text("\(walk.distance, specifier: "%.1f") km")
+                                                            .bold()
+                                                        Text("Distance")
+                                                            .font(.caption)
+                                                            .foregroundColor(.gray)
+                                                    }
+                                                    VStack(alignment: .leading) {
+                                                        Text("\(walk.speed)")
+                                                            .bold()
+                                                        Text("Speed")
+                                                            .font(.caption)
+                                                            .foregroundColor(.gray)
+                                                    }
                                                 }
                                             }
+                                            Spacer()
                                         }
-                                        Spacer()
+                                        .padding()
+                                        .background(Color(.systemGray6))
+                                        .cornerRadius(20)
+                                        .padding(.horizontal)
                                     }
-                                    .padding()
-                                    .background(Color(.systemGray6))
-                                    .cornerRadius(20)
-                                    .padding(.horizontal)
                                 }
+                                .padding(.bottom, 80)
+                            } else {
+                                Text("No recent walks yet")
+                                    .foregroundColor(.gray)
+                                    .padding(.horizontal)
                             }
-                            .padding(.bottom, 80)
                         }
                     }
 
@@ -186,8 +199,10 @@ struct HomeView: View {
             }
         }
         .onAppear {
-            if let stored = UserDefaults.standard.array(forKey: "recentWalks") as? [[String: String]] {
-                self.recentWalks = stored.compactMap { RecentWalk(from: $0) }
+            if ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] != "1" {
+                if let stored = UserDefaults.standard.array(forKey: "recentWalks") as? [[String: String]] {
+                    self.recentWalks = stored.compactMap { RecentWalk(from: $0) }
+                }
             }
         }
     }
